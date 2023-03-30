@@ -25,26 +25,32 @@ class ToplevelTaskForm(tk.CTkToplevel):
         self.title("Bug Form")
         self.userTitle = tk.CTkTextbox(self)
 
+        # form frame
+        self.formFrame = tk.CTkFrame(self)
+        self.formFrame.pack()
+
         # Priority
-        self.priorityLabel = tk.CTkLabel(self, text="Select Priority")
+        self.priorityLabel = tk.CTkLabel(self.formFrame, text="Select Priority")
         self.priorityLabel.grid(row=0,column=0)
-        self.priorityComboBox = tk.CTkComboBox(self,values=["Low", "Medium", "High"])
+        self.priorityComboBox = tk.CTkComboBox(self.formFrame,values=["Low", "Medium", "High"])
         self.priorityComboBox.grid(row=0, column=1)
 
         # Date
-        self.dateLabel = tk.CTkLabel(self, text="Date")
+        self.dateLabel = tk.CTkLabel(self.formFrame, text="Date")
         self.dateLabel.grid(row=1,column=0)
-        self.dateEntry = tk.CTkEntry(self,placeholder_text="")
+        self.dateEntry = tk.CTkEntry(self.formFrame,placeholder_text="")
         self.dateEntry.grid(row=1,column=1)
 
         # Description
         self.descriptionTextBox = tk.CTkTextbox(self)
+        self.descriptionTextBox.pack()
 
         # Button
-        self.confirmButton = tk.CTkButton(self, text="Confirm", command=confirmFunc)
+        self.confirmButton = tk.CTkButton(self, text="Confirm", command=self.confirmFunc)
+        self.confirmButton.pack()
 
-        def confirmFunc(self):
-            pass
+    def confirmFunc(self):
+        pass
 
 
 
