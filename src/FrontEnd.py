@@ -1,16 +1,15 @@
-import tkinter
 import customtkinter as tk
+import platform
 
 class taskClass(tk.CTkFrame):
     def __init__(self, master, title = "", **kwargs):
         super().__init__(master, **kwargs)
         self.tempFont = tk.CTkFont(family="Calibri", size=18)
-
         self.textBox = tk.CTkTextbox(self, height=100,font=self.tempFont)
         self.textBox.grid(row = 0, column = 0, sticky="ew")
         self.columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
-        #set text
+        # set text
         self.textBox.insert("0.0", title)
         self.textBox.configure(state="disabled",wrap="word")
         self.leftLabel = tk.CTkLabel(self, text="Temp Date Label",padx=10)
@@ -25,11 +24,28 @@ class ToplevelTaskForm(tk.CTkToplevel):
         self.resizable(False,False)
         self.title("Bug Form")
         self.userTitle = tk.CTkTextbox(self)
+
+        # Priority
         self.priorityLabel = tk.CTkLabel(self, text="Select Priority")
         self.priorityLabel.grid(row=0,column=0)
-        self.descriptionTextBox = tk.CTkTextbox(self)
+        self.priorityComboBox = tk.CTkComboBox(self,values=["Low", "Medium", "High"])
+        self.priorityComboBox.grid(row=0, column=1)
+
+        # Date
         self.dateLabel = tk.CTkLabel(self, text="Date")
         self.dateLabel.grid(row=1,column=0)
+        self.dateEntry = tk.CTkEntry(self,placeholder_text="")
+        self.dateEntry.grid(row=1,column=1)
+
+        # Description
+        self.descriptionTextBox = tk.CTkTextbox(self)
+
+        # Button
+        self.confirmButton = tk.CTkButton(self, text="Confirm", command=confirmFunc)
+
+        def confirmFunc(self):
+            pass
+
 
 
 
@@ -38,6 +54,11 @@ class app(tk.CTk):
         super().__init__()
         self.title("Bug Tracker")
         self.popUpForm = None
+
+        #linux config
+        self.host = platform.system()
+        if self.host == "Linux":
+            self.attributes('-type', 'dialog')
 
         #four scrollable frames
         self.openContainerFrame = tk.CTkFrame(self)
@@ -51,11 +72,11 @@ class app(tk.CTk):
         self.completedFrame= tk.CTkScrollableFrame(self,label_text="Complete")
         self.completedFrame.grid(row=0,column=3,sticky="nesw", padx = 15, pady=15)
 
-        #button
+        # Button
         self.addTaskButton =tk.CTkButton(master=self.openContainerFrame, text="Add Task", command=self.createTask)
         self.addTaskButton.grid(row=1,column=0, sticky="nesw",pady=15, padx=15)
 
-        #weight for the scrollable frames
+        # Weight for the scrollable frames
         for x in range(4):
             self.columnconfigure(x, weight=1)
         self.grid_rowconfigure(0, weight=1)
