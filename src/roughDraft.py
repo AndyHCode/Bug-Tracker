@@ -34,19 +34,11 @@ def storage(name,description,rowselection):
     return lists[rowselection].__len__() - 1
 
 
-def movement(oldrow,newrow,dicEntry):
-    document = open("tracker.pickle","rb")
-    lists = pickle.load(document)
-    lists[newrow].append(lists[oldrow][dicEntry])
-    lists[oldrow].pop(dicEntry)
-    ndocument = open("tracker.pickle","wb")
-    pickle.dump(lists,ndocument)
-    document.close()
-    return lists[newrow].__len__()-1
+
 
 
 x = storage("Test2","Testin2g",3)
-movement(3,0,x)
+
 document = open("bugtracker.pickle","rb")
 lists = pickle.load(document)
 print(lists[3],lists[0])
