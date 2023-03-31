@@ -1,8 +1,9 @@
 import customtkinter as tk
 import platform
+import datetime
 
 class taskClass(tk.CTkFrame):
-    def __init__(self, master, title = "", **kwargs):
+    def __init__(self, master, title = "", description="", priority="", date="", **kwargs):
         super().__init__(master, **kwargs)
         self.tempFont = tk.CTkFont(family="Calibri", size=18)
         self.textBox = tk.CTkTextbox(self, height=100,font=self.tempFont)
@@ -12,47 +13,93 @@ class taskClass(tk.CTkFrame):
         # set text
         self.textBox.insert("0.0", title)
         self.textBox.configure(state="disabled",wrap="word")
-        self.leftLabel = tk.CTkLabel(self, text="Temp Date Label",padx=10)
+        self.leftLabel = tk.CTkLabel(self, text=date,padx=10)
         self.leftLabel.grid(row = 1, column=0,sticky="w")
-        self.rightLabel = tk.CTkLabel(self, text="priority label",padx=10)
+        self.rightLabel = tk.CTkLabel(self, text=priority,padx=10)
         self.rightLabel.grid(row = 1, column=0,sticky="e")
 
 class ToplevelTaskForm(tk.CTkToplevel):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, frame=tk, listData=[] ,*args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.geometry("400x300")
-        self.resizable(False,False)
+        # self.geometry("400x300")
+        # self.resizable(False,False)
         self.title("Bug Form")
-        self.userTitle = tk.CTkTextbox(self)
+        self.frame = frame
+        self.listData = listData
 
-        # form frame
-        self.formFrame = tk.CTkFrame(self)
-        self.formFrame.pack()
+        #form Frame
+        self.formFrameTop = tk.CTkFrame(self)
+        self.formFrameTop.pack(padx=10, pady=10)
+        self.formFrameBottom = tk.CTkFrame(self)
+        self.formFrameBottom.pack(padx=10,pady=10)
 
-        # Priority
-        self.priorityLabel = tk.CTkLabel(self.formFrame, text="Select Priority")
-        self.priorityLabel.grid(row=0,column=0)
-        self.priorityComboBox = tk.CTkComboBox(self.formFrame,values=["Low", "Medium", "High"])
-        self.priorityComboBox.grid(row=0, column=1)
-
-        # Date
-        self.dateLabel = tk.CTkLabel(self.formFrame, text="Date")
-        self.dateLabel.grid(row=1,column=0)
-        self.dateEntry = tk.CTkEntry(self.formFrame,placeholder_text="")
-        self.dateEntry.grid(row=1,column=1)
+        # Title
+        self.userTitleLabel = tk.CTkLabel(self.formFrameTop, text="Title")
+        self.userTitleLabel.grid(row=0, column=0,)
+        self.userTitleTextBox = tk.CTkTextbox(self.formFrameTop, height=80)
+        self.userTitleTextBox.configure(wrap="word")
+        self.userTitleTextBox.grid(row=0, column=1, padx=10, pady=10)
 
         # Description
-        self.descriptionTextBox = tk.CTkTextbox(self)
-        self.descriptionTextBox.pack()
+        self.descriptionLabel = tk.CTkLabel(self.formFrameTop, text="Description")
+        self.descriptionLabel.grid(row=1, column=0, padx=10)
+        self.descriptionTextBox = tk.CTkTextbox(self.formFrameTop, height=150)
+        self.descriptionTextBox.configure(wrap="word")
+        self.descriptionTextBox.grid(row=1, column=1, padx=10, pady=10)
+
+        # Priority
+        self.priorityLabel = tk.CTkLabel(self.formFrameBottom, text="Select Priority")
+        self.priorityLabel.grid(row=0,column=0)
+        self.priorityComboBox = tk.CTkComboBox(self.formFrameBottom, values=["Low", "Medium", "High"], state="readonly")
+        self.priorityComboBox.set("Low")
+        self.priorityComboBox.grid(row=0, column=1,padx=10,pady=10)
+
+        # Date
+        self.dateLabel = tk.CTkLabel(self.formFrameBottom, text="Date")
+        self.dateLabel.grid(row=1,column=0)
+        self.dateEntry = tk.CTkEntry(self.formFrameBottom, placeholder_text="")
+        self.dateEntry.grid(row=1,column=1,padx=10, pady=10)
 
         # Button
         self.confirmButton = tk.CTkButton(self, text="Confirm", command=self.confirmFunc)
-        self.confirmButton.pack()
+        self.confirmButton.pack(padx=10, pady=10)
 
     def confirmFunc(self):
-        pass
+        #get data
+        self.dataTitle = self.userTitleTextBox.get("1.0", "end-1c")
+        self.dataDescription = self.descriptionTextBox.get("1.0","end-1c")
+        self.dataPriority = self.priorityComboBox.get()
+        self.dataDate = self.dateEntry.get()
 
+        # Error Checking
+        self.color = self.priorityLabel.cget("text_color")
+        self.userTitleLabel.configure(text_color=self.color)
+        self.descriptionLabel.configure(text_color=self.color)
+        self.dateLabel.configure(text_color=self.color)
+        self.failed = False
+        if(len(self.dataTitle) == 0):
+            self.userTitleLabel.configure(text_color="red")
+            self.failed = True
+        if(len(self.dataDescription) == 0):
+            self.descriptionLabel.configure(text_color="red")
+            self.failed = True
+        if(len(self.dataDate) == 0):
+            self.dateLabel.configure(text_color="red")
+            self.failed = True
+        if self.failed:
+            return
 
+        # create Task Frame
+        self.createTaskFrame(title=self.dataTitle, description=self.dataDescription,date=self.dataDate, priority=self.dataPriority, frameToPassTo=self.frame)
+        # close popup
+        self.destroy()
+
+    #Create Task Frame Func
+    def createTaskFrame(self, title="", description="", priority="", date="", frameToPassTo=tk):
+        self.listData.append(taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date))
+        self.listData[-1].grid(sticky="ew",padx=10,pady=5)
+        frameToPassTo.columnconfigure(0,weight=1)
+        
 
 
 class app(tk.CTk):
@@ -89,13 +136,15 @@ class app(tk.CTk):
         self.openContainerFrame.columnconfigure(0, weight=1)
         self.openContainerFrame.grid_rowconfigure(0, weight=1)
 
+        #currently holding all the task frame in a list
         self.testList = []
+
     def createTask(self):
-        self.testList.append(taskClass(master=self.openFrame,title="Bug: Every time I Press add task button, popup is not taking focus"))
-        self.testList[-1].grid(sticky="ew",padx=10,pady=5)
-        self.openFrame.columnconfigure(0,weight=1)
+        # self.testList.append(taskClass(master=self.openFrame,title="Bug: Every time I Press add task button, popup is not taking focus"))
+        # self.testList[-1].grid(sticky="ew",padx=10,pady=5)
+        # self.openFrame.columnconfigure(0,weight=1)
         if self.popUpForm is None or not self.popUpForm.winfo_exists():
-            self.popUpForm = ToplevelTaskForm(self)  # create window if its None or destroyed
+            self.popUpForm = ToplevelTaskForm(frame=self.openFrame, listData=self.testList)  # create window if its None or destroyed
             self.popUpForm.grab_set()
         else:
             self.popUpForm.focus()  # if window exists focus it
