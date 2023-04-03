@@ -3,7 +3,7 @@ import pickle, os
 
 def initialize():
     document = open("tracker.pickle","wb")
-    lists = []
+    lists = {}
     pickle.dump(lists,document)
     document.close()
 
@@ -22,7 +22,7 @@ def storage(name,description, date, priority):
     document = open("tracker.pickle","rb")
     lists = pickle.load(document)
     keys = len(lists) + 1
-    lists.append({keys:hold}) 
+    lists[keys] = hold
     
     ndocument = open("tracker.pickle","wb")
     pickle.dump(lists,ndocument)
@@ -34,15 +34,15 @@ def getData(key):
     document = open("tracker.pickle","rb")
     lists = pickle.load(document)
 
-    value = next(d[key] for d in lists if key in d)
+    #value = next(d[key] for d in lists if key in d)
+    value = lists[key]
     return value
 
 def getAllKeys():
     document = open("tracker.pickle","rb")
     lists = pickle.load(document)
     keylist = []
-    for i in range(len(lists)):
-        keylist.append(*lists[i].keys())
+    keylist = list(lists.keys())
     
     return keylist
 
@@ -50,19 +50,12 @@ def getSpecificKey(name,description, date, priority):
     val = [name,description, date, priority]
     document = open("tracker.pickle","rb")
     lists = pickle.load(document)
-    for i in range(len(lists)):
-        for key, value in lists[i].items():
-            if val == value:
-                return key
-            
-    return "key doesn't exist"
+    key = list(lists.values()).index(val)
 
 def deleter(keys):
     document = open("tracker.pickle","rb")
     lists = pickle.load(document)
-    deleted = keys
-    for i in range(len(lists))
-    
+    lists.pop(keys)
     ndocument = open("tracker.pickle","wb")
     pickle.dump(lists,ndocument)
     document.close()
@@ -79,8 +72,8 @@ print(getAllKeys())
 print(getSpecificKey("Test2","Testin2g","Testing", "Duh"))
 document = open("tracker.pickle","rb")
 lists = pickle.load(document)
-print("Old List", lists)
-deleter("Test4")
+print( lists)
+deleter("2")
 document = open("tracker.pickle","rb")
 lists = pickle.load(document)
 print("New List: ", lists)
