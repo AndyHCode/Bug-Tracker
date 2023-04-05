@@ -18,10 +18,10 @@ def fileChecker():
         return True
 
 
-def storage(name,description, date, priority):
+def storage(name, description, date, priority, position):
     ''' This function stores our values from the user into a dictionary'''
     ''' it first takes all the values submitted by the user and stores it into a List called hold '''
-    hold = [name,description,date,priority] 
+    hold = [name,description,date,priority, position] 
     document = open("tracker.pickle","rb")
     storage = pickle.load(document)
     ''' next it creates a "key" by taking the name submitted by the user, + a unique number '''
@@ -29,7 +29,7 @@ def storage(name,description, date, priority):
     ''' storing the unique key and value into the dictionary and then storing it into the pickle '''
     storage[keys] = hold
     ndocument = open("tracker.pickle","wb")
-    pickle.dump(storage,ndocument)
+    pickle.dump(storage, ndocument)
     document.close()
     ''' returning the unique key '''
     return keys
@@ -50,9 +50,9 @@ def getAllKeys():
     
     return keylist
 
-def getSpecificKey(name,description, date, priority):
+def getSpecificKey(name, description, date, priority, position):
     ''' this function searches for a specific key using the values in the dictionary '''
-    val = [name,description, date, priority]
+    val = [name, description, date, priority, position]
     document = open("tracker.pickle","rb")
     storage = pickle.load(document)
     key = list(storage.keys())[list(storage.values()).index(val)]
@@ -64,7 +64,7 @@ def deleter(keys):
     storage = pickle.load(document)
     del storage[keys]
     ndocument = open("tracker.pickle","wb")
-    pickle.dump(storage,ndocument)
+    pickle.dump(storage, ndocument)
     document.close()
     
 def editKeys(oldKey, newKey):
@@ -74,16 +74,16 @@ def editKeys(oldKey, newKey):
     storage[newKey] = storage[oldKey]
     deleter(oldKey)
     ndocument = open("tracker.pickle","wb")
-    pickle.dump(storage,ndocument)
+    pickle.dump(storage, ndocument)
     document.close()
 
-def editValues(keys,newValue):
+def editValues(keys, newValue):
     ''' This function changes the values stored in a specific key '''
     document = open("tracker.pickle","rb")
     storage = pickle.load(document)
     storage[keys] = newValue
     ndocument = open("tracker.pickle","wb")
-    pickle.dump(storage,ndocument)
+    pickle.dump(storage, ndocument)
     document.close()
 
 

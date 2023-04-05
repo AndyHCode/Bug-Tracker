@@ -1,9 +1,76 @@
 import customtkinter as tk
 import platform
 import datetime
+import roughDraft
+
+class viewTask(tk.CTkToplevel):
+    def __init__(self, itemID="", dataObj=tk, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # self.geometry("400x300")
+        # self.resizable(False,False)
+        self.allData = roughDraft.getValue(itemID)
+        self.title("Data")
+        self.itemID = itemID
+        self.dataObj = dataObj
+
+        #form Frame
+        self.formFrameTop = tk.CTkFrame(self)
+        self.formFrameTop.pack(padx=10, pady=10)
+        self.formFrameBottom = tk.CTkFrame(self)
+        self.formFrameBottom.pack(padx=10,pady=10)
+
+        # Title
+        self.userTitleLabel = tk.CTkLabel(self.formFrameTop, text="Title")
+        self.userTitleLabel.grid(row=0, column=0)
+        self.userTitleTextBox = tk.CTkTextbox(self.formFrameTop, height=80)
+        self.userTitleTextBox.configure(wrap="word")
+        self.userTitleTextBox.grid(row=0, column=1, padx=10, pady=10)
+        self.userTitleTextBox.insert("0.0", self.allData[0])
+        self.userTitleTextBox.configure(state="disabled")
+
+        # Description
+        self.descriptionLabel = tk.CTkLabel(self.formFrameTop, text="Description")
+        self.descriptionLabel.grid(row=1, column=0, padx=10)
+        self.descriptionTextBox = tk.CTkTextbox(self.formFrameTop, height=150)
+        self.descriptionTextBox.configure(wrap="word")
+        self.descriptionTextBox.grid(row=1, column=1, padx=10, pady=10)
+        self.descriptionTextBox.insert("0.0", self.allData[1])
+        self.descriptionTextBox.configure(state="disabled")
+
+        # Priority
+        self.priorityLabel = tk.CTkLabel(self.formFrameBottom, text="Select Priority")
+        self.priorityLabel.grid(row=0,column=0)
+        self.priorityEntry = tk.CTkEntry(self.formFrameBottom)
+        self.priorityEntry.insert(0, self.allData[3])
+        self.priorityEntry.configure(state="disabled")
+        self.priorityEntry.grid(row=0, column=1,padx=10,pady=10)
+
+        # Date
+        self.dateLabel = tk.CTkLabel(self.formFrameBottom, text="Date")
+        self.dateLabel.grid(row=1,column=0)
+        self.dateEntry = tk.CTkEntry(self.formFrameBottom, placeholder_text=datetime.date.today().strftime("%m/%d/%y"))
+        self.dateEntry.insert(0, self.allData[2])
+        self.dateEntry.configure(state="disabled")
+        self.dateEntry.grid(row=1,column=1,padx=10, pady=10)
+
+        # Button
+        self.leftButton = tk.CTkButton(self, text="Move Left", command=self.moveLeft)
+        self.rightButton = tk.CTkButton(self, text="Move right", command=self.moveRight)
+        self.deleteButton = tk.CTkButton(self, text="Delete", command=self.deleteData)
+        self.leftButton.pack(padx=10, pady=10)
+        self.rightButton.pack(padx=10, pady=10)
+        self.deleteButton.pack(padx=10, pady=10)
+
+    def moveLeft(self):
+        pass
+    def moveRight(self):
+        pass
+    def deleteData(self):
+        roughDraft.deleter(self.itemID)
+        self.dataObj.destroy()
 
 class taskClass(tk.CTkFrame):
-    def __init__(self, master, title = "", description="", priority="", date="", **kwargs):
+    def __init__(self, master, title = "", description="", priority="", date="", position = -1, **kwargs):
         super().__init__(master, **kwargs)
         self.tempFont = tk.CTkFont(family="Calibri", size=18)
         self.textBox = tk.CTkTextbox(self, height=100,font=self.tempFont)
@@ -17,6 +84,15 @@ class taskClass(tk.CTkFrame):
         self.leftLabel.grid(row = 1, column=0,sticky="w")
         self.rightLabel = tk.CTkLabel(self, text=priority,padx=10)
         self.rightLabel.grid(row = 1, column=0,sticky="e")
+        self.itemID = roughDraft.storage(title, description, date, priority, position)
+
+        # Making it clickable
+        self.bind("<Button-1>", self.leftClick)
+        self.textBox.bind("<Button-1>", self.leftClick)
+        self.leftLabel.bind("<Button-1>", self.leftClick)
+        self.rightLabel.bind("<Button-1>", self.leftClick)
+    def leftClick(self,event):
+        self.popupData = viewTask(self.itemID, self)
 
 class ToplevelTaskForm(tk.CTkToplevel):
     def __init__(self, frame=tk, listData=[] ,*args, **kwargs):
@@ -57,7 +133,7 @@ class ToplevelTaskForm(tk.CTkToplevel):
         # Date
         self.dateLabel = tk.CTkLabel(self.formFrameBottom, text="Date")
         self.dateLabel.grid(row=1,column=0)
-        self.dateEntry = tk.CTkEntry(self.formFrameBottom, placeholder_text="")
+        self.dateEntry = tk.CTkEntry(self.formFrameBottom, placeholder_text=datetime.date.today().strftime("%m/%d/%y"))
         self.dateEntry.grid(row=1,column=1,padx=10, pady=10)
 
         # Button
@@ -83,12 +159,14 @@ class ToplevelTaskForm(tk.CTkToplevel):
         if(len(self.dataDescription) == 0):
             self.descriptionLabel.configure(text_color="red")
             self.failed = True
-        if(len(self.dataDate) == 0):
-            self.dateLabel.configure(text_color="red")
-            self.failed = True
+        # if(len(self.dataDate) == 0):
+        #     self.dateLabel.configure(text_color="red")
+        #     self.failed = True
         if self.failed:
             return
 
+        if(len(self.dataDate) == 0):
+            self.dataDate = self.dateEntry.cget("placeholder_text")
         # create Task Frame
         self.createTaskFrame(title=self.dataTitle, description=self.dataDescription,date=self.dataDate, priority=self.dataPriority, frameToPassTo=self.frame)
         # close popup
@@ -96,7 +174,7 @@ class ToplevelTaskForm(tk.CTkToplevel):
 
     #Create Task Frame Func
     def createTaskFrame(self, title="", description="", priority="", date="", frameToPassTo=tk):
-        self.listData.append(taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date))
+        self.listData.append(taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position=0))
         self.listData[-1].grid(sticky="ew",padx=10,pady=5)
         frameToPassTo.columnconfigure(0,weight=1)
         
@@ -105,6 +183,9 @@ class ToplevelTaskForm(tk.CTkToplevel):
 class app(tk.CTk):
     def __init__(self):
         super().__init__()
+        # add data
+        roughDraft.fileChecker()
+
         self.title("Bug Tracker")
         self.popUpForm = None
 
@@ -137,14 +218,38 @@ class app(tk.CTk):
         self.openContainerFrame.grid_rowconfigure(0, weight=1)
 
         #currently holding all the task frame in a list
-        self.testList = []
+        self.allTaskList = []
+        self.startupLoadData()
 
+    def startupLoadData(self):
+        self.allID = roughDraft.getAllKeys()
+        print(self.allID)
+        for data in self.allID:
+            self.tempList = roughDraft.getValue(data)
+            if (self.tempList[4] == 0):
+                self.createTaskFrame(title=self.tempList[0], description=self.tempList[1], priority=self.tempList[3], date=self.tempList[2],
+                                     position=self.tempList[4], frameToPassTo=self.openFrame)
+            elif (self.tempList[4] == 1):
+                self.createTaskFrame(title=self.tempList[0], description=self.tempList[1], priority=self.tempList[3], date=self.tempList[2],
+                                     position=self.tempList[4], frameToPassTo=self.progressFrame)
+            elif (self.tempList[4] == 2):
+                self.createTaskFrame(title=self.tempList[0], description=self.tempList[1], priority=self.tempList[3], date=self.tempList[2],
+                                     position=self.tempList[4], frameToPassTo=self.reviewFrame)
+            elif (self.tempList[4] == 3):
+                self.createTaskFrame(title=self.tempList[0], description=self.tempList[1], priority=self.tempList[3], date=self.tempList[2],
+                                     position=self.tempList[4], frameToPassTo=self.completedFrame)
+
+    def createTaskFrame(self, title="", description="", priority="", date="", frameToPassTo=tk, position=-1):
+        self.allTaskList.append(taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position=position))
+        self.allTaskList[-1].grid(sticky="ew",padx=10,pady=5)
+        frameToPassTo.columnconfigure(0,weight=1)
+            
     def createTask(self):
         # self.testList.append(taskClass(master=self.openFrame,title="Bug: Every time I Press add task button, popup is not taking focus"))
         # self.testList[-1].grid(sticky="ew",padx=10,pady=5)
         # self.openFrame.columnconfigure(0,weight=1)
         if self.popUpForm is None or not self.popUpForm.winfo_exists():
-            self.popUpForm = ToplevelTaskForm(frame=self.openFrame, listData=self.testList)  # create window if its None or destroyed
+            self.popUpForm = ToplevelTaskForm(frame=self.openFrame, listData=self.allTaskList)  # create window if its None or destroyed
             self.popUpForm.grab_set()
         else:
             self.popUpForm.focus()  # if window exists focus it
