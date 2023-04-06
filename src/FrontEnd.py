@@ -3,8 +3,9 @@ import platform
 import datetime
 import roughDraft
 
+# When i Click on the Task, popup more information about task
 class viewTask(tk.CTkToplevel):
-    def __init__(self, itemID="", dataObj=tk, *args, **kwargs):
+    def __init__(self, itemID="", dataObj=tk, mainObj = tk,*args, **kwargs):
         super().__init__(*args, **kwargs)
         # self.geometry("400x300")
         # self.resizable(False,False)
@@ -12,6 +13,7 @@ class viewTask(tk.CTkToplevel):
         self.title("Data")
         self.itemID = itemID
         self.dataObj = dataObj
+        self.mainObj = mainObj
 
         #form Frame
         self.formFrameTop = tk.CTkFrame(self)
@@ -61,17 +63,45 @@ class viewTask(tk.CTkToplevel):
         self.rightButton.pack(padx=10, pady=10)
         self.deleteButton.pack(padx=10, pady=10)
 
-    def moveLeft(self):
-        pass
     def moveRight(self):
-        pass
+        if(self.allData[4] == 3):
+            return
+        if(self.allData[4] == 0):
+            self.createTaskFrame(title=self.allData[0], description=self.allData[1], priority=self.allData[3], date=self.allData[2], position=1, frameToPassTo=self.mainObj.progressFrame)
+        elif(self.allData[4] == 1):
+            self.createTaskFrame(title=self.allData[0], description=self.allData[1], priority=self.allData[3], date=self.allData[2], position=2, frameToPassTo=self.mainObj.reviewFrame)
+        elif(self.allData[4] == 2):
+            self.createTaskFrame(title=self.allData[0], description=self.allData[1], priority=self.allData[3], date=self.allData[2], position=3, frameToPassTo=self.mainObj.completedFrame)
+        self.destroy()
+    def moveLeft(self):
+        if(self.allData[4] == 0):
+            return
+        if(self.allData[4] == 1):
+            self.createTaskFrame(title=self.allData[0], description=self.allData[1], priority=self.allData[3], date=self.allData[2], position=0, frameToPassTo=self.mainObj.openFrame)
+        elif(self.allData[4] == 2):
+            self.createTaskFrame(title=self.allData[0], description=self.allData[1], priority=self.allData[3], date=self.allData[2], position=1, frameToPassTo=self.mainObj.progressFrame)
+        elif(self.allData[4] == 3):
+            self.createTaskFrame(title=self.allData[0], description=self.allData[1], priority=self.allData[3], date=self.allData[2], position=2, frameToPassTo=self.mainObj.reviewFrame)
+        self.destroy()
+
     def deleteData(self):
+        roughDraft.deleter(self.itemID)
+        self.dataObj.destroy()
+        self.destroy()
+
+    def createTaskFrame(self, title="", description="", priority="", date="", frameToPassTo=tk, position = -1):
+        self.temp = taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position= position, mainObj=self.mainObj, addToDatabase=True)
+        self.temp.grid(sticky="ew",padx=10,pady=5)
+        frameToPassTo.columnconfigure(0,weight=1)
         roughDraft.deleter(self.itemID)
         self.dataObj.destroy()
 
 class taskClass(tk.CTkFrame):
-    def __init__(self, master, title = "", description="", priority="", date="", position = -1, **kwargs):
+    def __init__(self, master, title = "", description="", priority="", date="", position = -1, mainObj = tk,**kwargs):
         super().__init__(master, **kwargs)
+
+        self.mainObj = mainObj
+
         self.tempFont = tk.CTkFont(family="Calibri", size=18)
         self.textBox = tk.CTkTextbox(self, height=100,font=self.tempFont)
         self.textBox.grid(row = 0, column = 0, sticky="ew")
@@ -92,16 +122,52 @@ class taskClass(tk.CTkFrame):
         self.leftLabel.bind("<Button-1>", self.leftClick)
         self.rightLabel.bind("<Button-1>", self.leftClick)
     def leftClick(self,event):
-        self.popupData = viewTask(self.itemID, self)
+        self.popupData = viewTask(self.itemID, self, mainObj= self.mainObj)
 
+# display task on gui
+class taskClass(tk.CTkFrame):
+    def __init__(self, master, title = "", description="", priority="", date="", position = -1, mainObj = tk, addToDatabase = False, itemID = "", **kwargs):
+        super().__init__(master, **kwargs)
+
+        self.mainObj = mainObj
+        self.addToDatabase = addToDatabase
+
+        self.tempFont = tk.CTkFont(family="Calibri", size=18)
+        self.textBox = tk.CTkTextbox(self, height=100,font=self.tempFont)
+        self.textBox.grid(row = 0, column = 0, sticky="ew")
+        self.columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=1)
+        # set text
+        self.textBox.insert("0.0", title)
+        self.textBox.configure(state="disabled",wrap="word")
+        self.leftLabel = tk.CTkLabel(self, text=date,padx=10)
+        self.leftLabel.grid(row = 1, column=0,sticky="w")
+        self.rightLabel = tk.CTkLabel(self, text=priority,padx=10)
+        self.rightLabel.grid(row = 1, column=0,sticky="e")
+
+        if self.addToDatabase:
+            self.itemID = roughDraft.storage(title, description, date, priority, position)
+        else:
+            self.itemID = itemID
+
+        # Making it clickable
+        self.bind("<Button-1>", self.leftClick)
+        self.textBox.bind("<Button-1>", self.leftClick)
+        self.leftLabel.bind("<Button-1>", self.leftClick)
+        self.rightLabel.bind("<Button-1>", self.leftClick)
+    def leftClick(self,event):
+        self.popupData = viewTask(self.itemID, self, mainObj= self.mainObj)
+
+# Where user input data
 class ToplevelTaskForm(tk.CTkToplevel):
-    def __init__(self, frame=tk, listData=[] ,*args, **kwargs):
+    def __init__(self, frame=tk, listData=[], mainObj = tk,*args, **kwargs):
         super().__init__(*args, **kwargs)
         # self.geometry("400x300")
         # self.resizable(False,False)
         self.title("Bug Form")
         self.frame = frame
         self.listData = listData
+        self.mainObj = mainObj
 
         #form Frame
         self.formFrameTop = tk.CTkFrame(self)
@@ -174,7 +240,7 @@ class ToplevelTaskForm(tk.CTkToplevel):
 
     #Create Task Frame Func
     def createTaskFrame(self, title="", description="", priority="", date="", frameToPassTo=tk):
-        self.listData.append(taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position=0))
+        self.listData.append(taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position=0, mainObj=self.mainObj, addToDatabase=True))
         self.listData[-1].grid(sticky="ew",padx=10,pady=5)
         frameToPassTo.columnconfigure(0,weight=1)
         
@@ -198,13 +264,32 @@ class app(tk.CTk):
         self.openContainerFrame = tk.CTkFrame(self)
         self.openContainerFrame.grid(row=0,column=0, sticky = "nesw", padx = 15, pady=15)
         self.openFrame = tk.CTkScrollableFrame(self.openContainerFrame,label_text="Open")
-        self.openFrame.grid(row=0,column=0, sticky = "nesw")
-        self.progressFrame = tk.CTkScrollableFrame(self,label_text="In Progress")
-        self.progressFrame.grid(row=0,column=1, sticky = "nesw", padx = 15, pady=15)
-        self.reviewFrame = tk.CTkScrollableFrame(self,label_text="Ready For Review")
-        self.reviewFrame.grid(row=0,column=2, sticky = "nesw", padx = 15, pady=15)
-        self.completedFrame= tk.CTkScrollableFrame(self,label_text="Complete")
-        self.completedFrame.grid(row=0,column=3,sticky="nesw", padx = 15, pady=15)
+        self.openFrame.grid(row=0,column=0, sticky = "nesw", padx=15,pady=15)
+        self.openContainerFrame.columnconfigure(0, weight=1)
+        self.openContainerFrame.grid_rowconfigure(0, weight=1)
+
+        self.progressContainerFrame = tk.CTkFrame(self)
+        self.progressContainerFrame.grid(row=0,column=1, sticky = "nesw", padx = 15, pady=15)
+        self.progressFrame = tk.CTkScrollableFrame(self.progressContainerFrame,label_text="In Progress")
+        self.progressFrame.grid(row=0,column=0, sticky = "nesw", padx = 15, pady=15)
+        self.progressContainerFrame.columnconfigure(0, weight=1)
+        self.progressContainerFrame.grid_rowconfigure(0, weight=1)
+
+
+        self.reviewContainerFrame = tk.CTkFrame(self)
+        self.reviewContainerFrame.grid(row=0,column=2, sticky = "nesw", padx = 15, pady=15)
+        self.reviewFrame = tk.CTkScrollableFrame(self.reviewContainerFrame,label_text="Ready For Review")
+        self.reviewFrame.grid(row=0,column=0, sticky = "nesw", padx = 15, pady=15)
+        self.reviewContainerFrame.columnconfigure(0, weight=1)
+        self.reviewContainerFrame.grid_rowconfigure(0, weight=1)
+
+
+        self.completeContainerFrame = tk.CTkFrame(self)
+        self.completeContainerFrame.grid(row=0,column=3, sticky = "nesw", padx = 15, pady=15)
+        self.completedFrame= tk.CTkScrollableFrame(self.completeContainerFrame,label_text="Complete")
+        self.completedFrame.grid(row=0,column=0,sticky="nesw", padx = 15, pady=15)
+        self.completeContainerFrame.columnconfigure(0, weight=1)
+        self.completeContainerFrame.grid_rowconfigure(0, weight=1)
 
         # Button
         self.addTaskButton =tk.CTkButton(master=self.openContainerFrame, text="Add Task", command=self.createTask)
@@ -214,8 +299,6 @@ class app(tk.CTk):
         for x in range(4):
             self.columnconfigure(x, weight=1)
         self.grid_rowconfigure(0, weight=1)
-        self.openContainerFrame.columnconfigure(0, weight=1)
-        self.openContainerFrame.grid_rowconfigure(0, weight=1)
 
         #currently holding all the task frame in a list
         self.allTaskList = []
@@ -227,29 +310,31 @@ class app(tk.CTk):
         for data in self.allID:
             self.tempList = roughDraft.getValue(data)
             if (self.tempList[4] == 0):
-                self.createTaskFrame(title=self.tempList[0], description=self.tempList[1], priority=self.tempList[3], date=self.tempList[2],
-                                     position=self.tempList[4], frameToPassTo=self.openFrame)
+                self.addTaskFrame(title=self.tempList[0], description=self.tempList[1], priority=self.tempList[3], date=self.tempList[2],
+                                     position=self.tempList[4], frameToPassTo=self.openFrame, itemID=data)
             elif (self.tempList[4] == 1):
-                self.createTaskFrame(title=self.tempList[0], description=self.tempList[1], priority=self.tempList[3], date=self.tempList[2],
-                                     position=self.tempList[4], frameToPassTo=self.progressFrame)
+                self.addTaskFrame(title=self.tempList[0], description=self.tempList[1], priority=self.tempList[3], date=self.tempList[2],
+                                     position=self.tempList[4], frameToPassTo=self.progressFrame, itemID=data)
             elif (self.tempList[4] == 2):
-                self.createTaskFrame(title=self.tempList[0], description=self.tempList[1], priority=self.tempList[3], date=self.tempList[2],
-                                     position=self.tempList[4], frameToPassTo=self.reviewFrame)
+                self.addTaskFrame(title=self.tempList[0], description=self.tempList[1], priority=self.tempList[3], date=self.tempList[2],
+                                     position=self.tempList[4], frameToPassTo=self.reviewFrame, itemID=data)
             elif (self.tempList[4] == 3):
-                self.createTaskFrame(title=self.tempList[0], description=self.tempList[1], priority=self.tempList[3], date=self.tempList[2],
-                                     position=self.tempList[4], frameToPassTo=self.completedFrame)
+                self.addTaskFrame(title=self.tempList[0], description=self.tempList[1], priority=self.tempList[3], date=self.tempList[2],
+                                     position=self.tempList[4], frameToPassTo=self.completedFrame,itemID=data)
 
     def createTaskFrame(self, title="", description="", priority="", date="", frameToPassTo=tk, position=-1):
-        self.allTaskList.append(taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position=position))
+        self.allTaskList.append(taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position=position, mainObj=self, addToDatabase=True))
         self.allTaskList[-1].grid(sticky="ew",padx=10,pady=5)
         frameToPassTo.columnconfigure(0,weight=1)
             
+    def addTaskFrame(self, title="", description="", priority="", date="", frameToPassTo=tk, position=-1, itemID = ""):
+        self.allTaskList.append(taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position=position, mainObj=self, itemID = itemID))
+        self.allTaskList[-1].grid(sticky="ew",padx=10,pady=5)
+        frameToPassTo.columnconfigure(0,weight=1)
+
     def createTask(self):
-        # self.testList.append(taskClass(master=self.openFrame,title="Bug: Every time I Press add task button, popup is not taking focus"))
-        # self.testList[-1].grid(sticky="ew",padx=10,pady=5)
-        # self.openFrame.columnconfigure(0,weight=1)
         if self.popUpForm is None or not self.popUpForm.winfo_exists():
-            self.popUpForm = ToplevelTaskForm(frame=self.openFrame, listData=self.allTaskList)  # create window if its None or destroyed
+            self.popUpForm = ToplevelTaskForm(frame=self.openFrame, listData=self.allTaskList, mainObj = self)  # create window if its None or destroyed
             self.popUpForm.grab_set()
         else:
             self.popUpForm.focus()  # if window exists focus it
