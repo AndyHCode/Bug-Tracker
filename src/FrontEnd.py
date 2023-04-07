@@ -20,6 +20,7 @@ class viewTask(tk.CTkToplevel):
         self.formFrameTop.pack(padx=10, pady=10)
         self.formFrameBottom = tk.CTkFrame(self)
         self.formFrameBottom.pack(padx=10,pady=10)
+        
 
         # Title
         self.userTitleLabel = tk.CTkLabel(self.formFrameTop, text="Title")
@@ -121,9 +122,11 @@ class taskClass(tk.CTkFrame):
         self.textBox.bind("<Button-1>", self.leftClick)
         self.leftLabel.bind("<Button-1>", self.leftClick)
         self.rightLabel.bind("<Button-1>", self.leftClick)
+        
     def leftClick(self,event):
         self.popupData = viewTask(self.itemID, self, mainObj= self.mainObj)
         self.popupData.attributes('-topmost',True)
+        
 
 
 # display task on gui
@@ -159,6 +162,8 @@ class taskClass(tk.CTkFrame):
         self.rightLabel.bind("<Button-1>", self.leftClick)
     def leftClick(self,event):
         self.popupData = viewTask(self.itemID, self, mainObj= self.mainObj)
+        self.popupData.attributes('-topmost',True)
+        self.popupData.grab_set()
 
 # Where user input data
 class ToplevelTaskForm(tk.CTkToplevel):
