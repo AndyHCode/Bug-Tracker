@@ -123,6 +123,8 @@ class taskClass(tk.CTkFrame):
         self.rightLabel.bind("<Button-1>", self.leftClick)
     def leftClick(self,event):
         self.popupData = viewTask(self.itemID, self, mainObj= self.mainObj)
+        self.popupData.attributes('-topmost',True)
+
 
 # display task on gui
 class taskClass(tk.CTkFrame):
@@ -335,6 +337,7 @@ class app(tk.CTk):
     def createTask(self):
         if self.popUpForm is None or not self.popUpForm.winfo_exists():
             self.popUpForm = ToplevelTaskForm(frame=self.openFrame, listData=self.allTaskList, mainObj = self)  # create window if its None or destroyed
+            self.popUpForm.attributes('-topmost',True)
             self.popUpForm.grab_set()
         else:
             self.popUpForm.focus()  # if window exists focus it
