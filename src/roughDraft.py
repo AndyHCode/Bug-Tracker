@@ -89,12 +89,3 @@ def editValues(keys, newValue):
 
 
 
-fileChecker()
-document = open("tracker.pickle","rb")
-storage = pickle.load(document)
-lists = ["Test", "NEWTEST", "04/06/23", "Low", 2]
-editValues("Test1924", lists)
-document = open("tracker.pickle","rb")
-storage = pickle.load(document)
-print(storage)
-
