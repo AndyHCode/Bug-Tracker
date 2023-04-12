@@ -68,16 +68,74 @@ class viewTask(tk.CTkToplevel):
         self.leftButton = tk.CTkButton(self.buttonFrame, text="Move Left", command=self.moveLeft)
         self.rightButton = tk.CTkButton(self.buttonFrame, text="Move right", command=self.moveRight)
         self.deleteButton = tk.CTkButton(self.buttonFrame, text="Delete", command=self.deleteData)
-        self.editButton = tk.CTkButton(self.buttonFrame, text="edit", command=self.edit)
+        self.editButton = tk.CTkButton(self.buttonFrame, text="edit", command=self.editData)
+        self.saveButton = tk.CTkButton(self.buttonFrame, text="Save", command=self.saveData)
         self.leftButton.grid(row = 0, column = 0,padx=10, pady=10)
         self.rightButton.grid(row = 0, column = 1, padx=10, pady=10)
         self.deleteButton.grid(row = 1, column = 0, padx=10, pady=10)
         self.editButton.grid(row = 1, column = 1, padx=10, pady=10)
 
-    def edit(self):
-        self.userTitleLabel.configure("enabled")
-        pass
+    def saveData(self):
+        #get data
+        self.dataTitle = self.userTitleTextBox.get("1.0", "end-1c")
+        self.dataDescription = self.descriptionTextBox.get("1.0","end-1c")
+        self.dataPriority = self.priorityComboBox.get()
+        self.dataDate = self.dateEntry.get()
 
+        # Error Checking
+        self.color = self.priorityLabel.cget("text_color")
+        self.userTitleLabel.configure(text_color=self.color)
+        self.descriptionLabel.configure(text_color=self.color)
+        self.dateLabel.configure(text_color=self.color)
+        self.failed = False
+        if(len(self.dataTitle) == 0):
+            self.userTitleLabel.configure(text_color="red")
+            self.failed = True
+        if(len(self.dataDescription) == 0):
+            self.descriptionLabel.configure(text_color="red")
+            self.failed = True
+        if(not(len(self.dataDate) == 0) and not dateChecker(self.dataDate)):
+            self.dateLabel.configure(text_color="red")
+            self.failed = True
+        if self.failed:
+            return
+
+        if(len(self.dataDate) == 0):
+            self.dataDate = self.dateEntry.cget("placeholder_text")
+        else:
+            self.dataDate = datetime.datetime.strptime(self.dataDate, '%m/%d/%y').strftime("%m/%d/%y")
+        # create Task Frame
+        roughDraft.editValues(self.itemID, [self.dataTitle, self.dataDescription, self.dataDate, self.dataPriority, self.allData[4]])
+        self.dataObj.textBox.configure(state="normal")
+        self.dataObj.textBox.delete("0.0", "end")
+        self.dataObj.textBox.insert("0.0", self.dataTitle)
+        self.dataObj.textBox.configure(state="disabled")
+        self.dataObj.leftLabel.configure(text=self.dataDate)
+        self.dataObj.rightLabel.configure(text=self.dataPriority)
+        # close popup
+        # close popup
+        self.destroy()
+
+
+    def editData(self):
+        # make everything editable
+        self.userTitleTextBox.configure(state="normal")
+        self.descriptionTextBox.configure(state="normal")
+        self.dateEntry.configure(state="normal")
+
+        # replace priority with priority combobox
+        self.priorityEntry.grid_remove()
+        self.priorityComboBox = tk.CTkComboBox(self.formFrameBottom, values=["Low", "Medium", "High"], state="readonly")
+        self.priorityComboBox.set(self.priorityEntry.get())
+        self.priorityComboBox.grid(row=0, column=1,padx=10,pady=10)
+
+        # remove button
+        self.leftButton.grid_remove()
+        self.rightButton.grid_remove()
+        self.editButton.grid_remove()
+
+        #add save button
+        self.saveButton.grid(row = 1, column = 1, padx=10, pady=10)
 
     def moveRight(self):
         if(self.allData[4] == 3):
@@ -111,38 +169,6 @@ class viewTask(tk.CTkToplevel):
         frameToPassTo.columnconfigure(0,weight=1)
         roughDraft.deleter(self.itemID)
         self.dataObj.destroy()
-
-
-
-class taskClass(tk.CTkFrame):
-    def __init__(self, master, title = "", description="", priority="", date="", position = -1, mainObj = tk,**kwargs):
-        super().__init__(master, **kwargs)
-
-        self.mainObj = mainObj
-
-        self.tempFont = tk.CTkFont(family="Calibri", size=18)
-        self.textBox = tk.CTkTextbox(self, height=100,font=self.tempFont)
-        self.textBox.grid(row = 0, column = 0, sticky="ew")
-        self.columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=1)
-        # set text
-        self.textBox.insert("0.0", title)
-        self.textBox.configure(state="disabled",wrap="word")
-        self.leftLabel = tk.CTkLabel(self, text=date,padx=10)
-        self.leftLabel.grid(row = 1, column=0,sticky="w")
-        self.rightLabel = tk.CTkLabel(self, text=priority,padx=10)
-        self.rightLabel.grid(row = 1, column=0,sticky="e")
-        self.itemID = roughDraft.storage(title, description, date, priority, position)
-
-        # Making it clickable
-        self.bind("<Button-1>", self.leftClick)
-        self.textBox.bind("<Button-1>", self.leftClick)
-        self.leftLabel.bind("<Button-1>", self.leftClick)
-        self.rightLabel.bind("<Button-1>", self.leftClick)
-        
-    def leftClick(self,event):
-        self.popupData = viewTask(self.itemID, self, mainObj= self.mainObj)
-        self.popupData.attributes('-topmost',True)
         
 # display task on gui
 class taskClass(tk.CTkFrame):
