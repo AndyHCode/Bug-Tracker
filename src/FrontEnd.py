@@ -2,6 +2,13 @@ import customtkinter as tk
 import platform
 import datetime
 import roughDraft
+# Check date
+def dateChecker(date):
+    try:
+        datetime.datetime.strptime(date, '%m/%d/%y')
+        return True
+    except ValueError:
+        return False
 
 print(tk.__file__)
 # When i Click on the Task, popup more information about task
@@ -92,7 +99,7 @@ class viewTask(tk.CTkToplevel):
         self.destroy()
 
     def createTaskFrame(self, title="", description="", priority="", date="", frameToPassTo=tk, position = -1):
-        self.temp = taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position= position, mainObj=self.mainObj, addToDatabase=True)
+        self.temp = taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position=position, mainObj=self.mainObj, addToDatabase=True)
         self.temp.grid(sticky="ew",padx=10,pady=5)
         frameToPassTo.columnconfigure(0,weight=1)
         roughDraft.deleter(self.itemID)
@@ -233,14 +240,16 @@ class ToplevelTaskForm(tk.CTkToplevel):
         if(len(self.dataDescription) == 0):
             self.descriptionLabel.configure(text_color="red")
             self.failed = True
-        # if(len(self.dataDate) == 0):
-        #     self.dateLabel.configure(text_color="red")
-        #     self.failed = True
+        if(not dateChecker(self.dataDate)):
+            self.dateLabel.configure(text_color="red")
+            self.failed = True
         if self.failed:
             return
 
         if(len(self.dataDate) == 0):
             self.dataDate = self.dateEntry.cget("placeholder_text")
+        else:
+            self.dataDate = datetime.datetime.strptime(self.dataDate, '%m/%d/%y').strftime("%m/%d/%y")
         # create Task Frame
         self.createTaskFrame(title=self.dataTitle, description=self.dataDescription,date=self.dataDate, priority=self.dataPriority, frameToPassTo=self.frame)
         # close popup
