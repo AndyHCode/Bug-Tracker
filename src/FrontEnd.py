@@ -177,6 +177,7 @@ class taskClass(tk.CTkFrame):
 
         self.mainObj = mainObj
         self.addToDatabase = addToDatabase
+        #self.configure(fg_color=("#333333", "#333333"), border_color=("#333333", "#3333333"))
 
         self.tempFont = tk.CTkFont(family="Calibri", size=18)
         self.textBox = tk.CTkTextbox(self, height=100,font=self.tempFont)
@@ -293,8 +294,6 @@ class ToplevelTaskForm(tk.CTkToplevel):
         self.listData.append(taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position=0, mainObj=self.mainObj, addToDatabase=True))
         self.listData[-1].grid(sticky="ew",padx=10,pady=5)
         frameToPassTo.columnconfigure(0,weight=1)
-        
-
 
 class app(tk.CTk):
     def __init__(self):
@@ -309,16 +308,23 @@ class app(tk.CTk):
         self.host = platform.system()
         if self.host == "Linux":
             self.attributes('-type', 'dialog')
-
+        self.frame=tk.CTkFrame(self)
+        self.frame.grid_rowconfigure(0, weight=1)
+        self.frame.columnconfigure(0, weight=1)
+        self.frame.grid(row=0,column=0,sticky="nesw")
+        self.tabView = tk.CTkTabview(self.frame)
+        self.tabView.grid(row=0,column=0,padx=5, pady=5,sticky="nesw")
+        self.tabView.add("Tracker")
+        self.tabView.add("Settings")
         #four scrollable frames
-        self.openContainerFrame = tk.CTkFrame(self)
+        self.openContainerFrame = tk.CTkFrame(self.tabView.tab("Tracker"))
         self.openContainerFrame.grid(row=0,column=0, sticky = "nesw", padx = 15, pady=15)
         self.openFrame = tk.CTkScrollableFrame(self.openContainerFrame,label_text="Open")
         self.openFrame.grid(row=0,column=0, sticky = "nesw", padx=15,pady=15)
         self.openContainerFrame.columnconfigure(0, weight=1)
         self.openContainerFrame.grid_rowconfigure(0, weight=1)
 
-        self.progressContainerFrame = tk.CTkFrame(self)
+        self.progressContainerFrame = tk.CTkFrame(self.tabView.tab("Tracker"))
         self.progressContainerFrame.grid(row=0,column=1, sticky = "nesw", padx = 15, pady=15)
         self.progressFrame = tk.CTkScrollableFrame(self.progressContainerFrame,label_text="In Progress")
         self.progressFrame.grid(row=0,column=0, sticky = "nesw", padx = 15, pady=15)
@@ -326,7 +332,7 @@ class app(tk.CTk):
         self.progressContainerFrame.grid_rowconfigure(0, weight=1)
 
 
-        self.reviewContainerFrame = tk.CTkFrame(self)
+        self.reviewContainerFrame = tk.CTkFrame(self.tabView.tab("Tracker"))
         self.reviewContainerFrame.grid(row=0,column=2, sticky = "nesw", padx = 15, pady=15)
         self.reviewFrame = tk.CTkScrollableFrame(self.reviewContainerFrame,label_text="Ready For Review")
         self.reviewFrame.grid(row=0,column=0, sticky = "nesw", padx = 15, pady=15)
@@ -334,7 +340,7 @@ class app(tk.CTk):
         self.reviewContainerFrame.grid_rowconfigure(0, weight=1)
 
 
-        self.completeContainerFrame = tk.CTkFrame(self)
+        self.completeContainerFrame = tk.CTkFrame(self.tabView.tab("Tracker"))
         self.completeContainerFrame.grid(row=0,column=3, sticky = "nesw", padx = 15, pady=15)
         self.completedFrame= tk.CTkScrollableFrame(self.completeContainerFrame,label_text="Complete")
         self.completedFrame.grid(row=0,column=0,sticky="nesw", padx = 15, pady=15)
@@ -345,14 +351,30 @@ class app(tk.CTk):
         self.addTaskButton =tk.CTkButton(master=self.openContainerFrame, text="Add Task", command=self.createTask)
         self.addTaskButton.grid(row=1,column=0, sticky="nesw",pady=15, padx=15)
 
+        self.settingFrame = tk.CTkFrame(self.tabView.tab("Settings"))
+        self.settingFrame.place(relx=.5,rely=.5,anchor=tk.CENTER)
+        self.themeLabel = tk.CTkLabel(self.settingFrame,text="Themes")
+        self.themeLabel.grid(row=0, column=0,padx=10,pady=10)
+        self.themeOptionMenu = tk.CTkOptionMenu(master = self.settingFrame, values = ["System Theme","Light","Dark"], command=self.themeSelect)
+        self.themeOptionMenu.grid(row=0, column=1, padx=10,pady=10)
+
         # Weight for the scrollable frames
         for x in range(4):
-            self.columnconfigure(x, weight=1)
+            self.tabView.tab("Tracker").columnconfigure(x, weight=1)
+            self.tabView.tab("Tracker").grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
 
         #currently holding all the task frame in a list
         self.allTaskList = []
         self.startupLoadData()
+    def themeSelect(self, color):
+        if color == "Dark":
+            tk.set_appearance_mode("dark")
+        elif color == "Light":
+            tk.set_appearance_mode("light")
+        elif color == "System Theme":
+            tk.set_appearance_mode("system")
 
     def startupLoadData(self):
         self.allID = roughDraft.getAllKeys()
@@ -392,7 +414,7 @@ class app(tk.CTk):
 
 if __name__ == "__main__":
     tk.set_appearance_mode("dark")
-    #tk.set_default_color_theme("src\kindared.json")
+    tk.set_default_color_theme("src/DarkBlue.json")
     app = app()
     app.geometry("1200x600")
     app.mainloop()
