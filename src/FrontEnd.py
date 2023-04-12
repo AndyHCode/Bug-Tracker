@@ -3,6 +3,7 @@ import platform
 import datetime
 import roughDraft
 
+print(tk.__file__)
 # When i Click on the Task, popup more information about task
 class viewTask(tk.CTkToplevel):
     def __init__(self, itemID="", dataObj=tk, mainObj = tk,*args, **kwargs):
@@ -349,6 +350,7 @@ class app(tk.CTk):
 
 if __name__ == "__main__":
     tk.set_appearance_mode("dark")
+    tk.set_default_color_theme("C:\Users\knigh\OneDrive\CSC4110\github projects\Bug-Tracker\src\red.json")
     app = app()
     app.geometry("1200x600")
     app.mainloop()
