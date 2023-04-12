@@ -10,7 +10,7 @@ def dateChecker(date):
     except ValueError:
         return False
 
-# When i Click on the Task, popup more information about task
+# When clicked on the Task, popup more information about task
 class viewTask(tk.CTkToplevel):
     def __init__(self, itemID="", dataObj=tk, mainObj = tk,*args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -27,7 +27,8 @@ class viewTask(tk.CTkToplevel):
         self.formFrameTop.pack(padx=10, pady=10)
         self.formFrameBottom = tk.CTkFrame(self)
         self.formFrameBottom.pack(padx=10,pady=10)
-        
+        self.buttonFrame = tk.CTkFrame(self)
+        self.buttonFrame.pack(padx=10, pady=10)
 
         # Title
         self.userTitleLabel = tk.CTkLabel(self.formFrameTop, text="Title")
@@ -64,12 +65,19 @@ class viewTask(tk.CTkToplevel):
         self.dateEntry.grid(row=1,column=1,padx=10, pady=10)
 
         # Button
-        self.leftButton = tk.CTkButton(self, text="Move Left", command=self.moveLeft)
-        self.rightButton = tk.CTkButton(self, text="Move right", command=self.moveRight)
-        self.deleteButton = tk.CTkButton(self, text="Delete", command=self.deleteData)
-        self.leftButton.pack(padx=10, pady=10)
-        self.rightButton.pack(padx=10, pady=10)
-        self.deleteButton.pack(padx=10, pady=10)
+        self.leftButton = tk.CTkButton(self.buttonFrame, text="Move Left", command=self.moveLeft)
+        self.rightButton = tk.CTkButton(self.buttonFrame, text="Move right", command=self.moveRight)
+        self.deleteButton = tk.CTkButton(self.buttonFrame, text="Delete", command=self.deleteData)
+        self.editButton = tk.CTkButton(self.buttonFrame, text="edit", command=self.edit)
+        self.leftButton.grid(row = 0, column = 0,padx=10, pady=10)
+        self.rightButton.grid(row = 0, column = 1, padx=10, pady=10)
+        self.deleteButton.grid(row = 1, column = 0, padx=10, pady=10)
+        self.editButton.grid(row = 1, column = 1, padx=10, pady=10)
+
+    def edit(self):
+        self.userTitleLabel.configure("enabled")
+        pass
+
 
     def moveRight(self):
         if(self.allData[4] == 3):
@@ -104,6 +112,8 @@ class viewTask(tk.CTkToplevel):
         roughDraft.deleter(self.itemID)
         self.dataObj.destroy()
 
+
+
 class taskClass(tk.CTkFrame):
     def __init__(self, master, title = "", description="", priority="", date="", position = -1, mainObj = tk,**kwargs):
         super().__init__(master, **kwargs)
@@ -134,8 +144,6 @@ class taskClass(tk.CTkFrame):
         self.popupData = viewTask(self.itemID, self, mainObj= self.mainObj)
         self.popupData.attributes('-topmost',True)
         
-
-
 # display task on gui
 class taskClass(tk.CTkFrame):
     def __init__(self, master, title = "", description="", priority="", date="", position = -1, mainObj = tk, addToDatabase = False, itemID = "", **kwargs):
@@ -239,7 +247,7 @@ class ToplevelTaskForm(tk.CTkToplevel):
         if(len(self.dataDescription) == 0):
             self.descriptionLabel.configure(text_color="red")
             self.failed = True
-        if(not dateChecker(self.dataDate)):
+        if(not(len(self.dataDate) == 0) and not dateChecker(self.dataDate)):
             self.dateLabel.configure(text_color="red")
             self.failed = True
         if self.failed:
