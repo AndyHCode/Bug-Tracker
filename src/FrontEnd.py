@@ -366,6 +366,7 @@ class app(tk.CTk):
 
 if __name__ == "__main__":
     tk.set_appearance_mode("dark")
+    #tk.set_default_color_theme("src\kindared.json")
     app = app()
     app.geometry("1200x600")
     app.mainloop()
