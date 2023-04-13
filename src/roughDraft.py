@@ -101,9 +101,5 @@ def editValues(keys, newValue):
     pickle.dump(storage, ndocument)
     document.close()
 
-boolfile()
-add2bool("a")
-document = open("boolstorage.pickle","rb")
-storage = pickle.load(document)
-print(storage)
+
 
