@@ -399,8 +399,8 @@ class app(tk.CTk):
             self.colorOptionMenu.set("Green")
         if roughDraft.getter()[1] == "light":
             self.themeOptionMenu.set("Light")
-        elif roughDraft.getter()[1] == "Dark":
-            self.themeOptionMenu.set("dark")
+        elif roughDraft.getter()[1] == "dark":
+            self.themeOptionMenu.set("Dark")
         elif roughDraft.getter()[1] == "system":
             self.themeOptionMenu.set("System Theme")
 
