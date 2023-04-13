@@ -8,14 +8,29 @@ def initialize():
     pickle.dump(storage,document)
     document.close()
 
+def boolfile():
+    document = open("boolstorage.pickle","wb")
+    storage = []
+    pickle.dump(storage,document)
+    document.close()
+
+def add2bool(variable):
+    document = open("boolstorage.pickle","rb")
+    storage = pickle.load(document)
+    storage.append(variable)
+    document = open("boolstorage.pickle","wb")
+    pickle.dump(storage,document)
+    document.close()
+
 def fileChecker():
     ''' this function checks to see if the pickle file exists, and if not it creates it'''
     checker = os.path.isfile("tracker.pickle")
     if checker == False:
         initialize()
     
-    else:
-        return True
+    bchecker = os.path.isfile("boolstorage.pickle")
+    if bchecker == False:
+        boolfile
 
 
 def storage(name, description, date, priority, position):
@@ -86,6 +101,9 @@ def editValues(keys, newValue):
     pickle.dump(storage, ndocument)
     document.close()
 
-
-
+boolfile()
+add2bool("a")
+document = open("boolstorage.pickle","rb")
+storage = pickle.load(document)
+print(storage)
 
