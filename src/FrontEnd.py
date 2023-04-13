@@ -393,7 +393,7 @@ class app(tk.CTk):
             self.colorOptionMenu.set("Yellow")
         elif roughDraft.getter()[0] == "blue":
             self.colorOptionMenu.set("Blue")
-        elif roughDraft.getter()[0] == "dark blue":
+        elif roughDraft.getter()[0] == "dark-blue":
             self.colorOptionMenu.set("Dark Blue")
         elif roughDraft.getter()[0] == "green":
             self.colorOptionMenu.set("Green")
@@ -444,8 +444,8 @@ class app(tk.CTk):
             roughDraft.setter("blue", roughDraft.getter()[1])
             tk.set_default_color_theme("blue")
         if color == "Dark Blue":
-            roughDraft.setter("dark blue", roughDraft.getter()[1])
-            tk.set_default_color_theme("dark blue")
+            roughDraft.setter("dark-blue", roughDraft.getter()[1])
+            tk.set_default_color_theme("dark-blue")
         if color == "Green":
             roughDraft.setter("green", roughDraft.getter()[1])
             tk.set_default_color_theme("green")
