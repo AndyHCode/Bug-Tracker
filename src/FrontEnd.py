@@ -113,6 +113,12 @@ class viewTask(tk.CTkToplevel):
         self.dataObj.textBox.configure(state="disabled")
         self.dataObj.leftLabel.configure(text=self.dataDate)
         self.dataObj.rightLabel.configure(text=self.dataPriority)
+        if(self.dataPriority == "Low"):
+            self.dataObj.rightLabel.configure(text_color=("green","light green"))
+        if(self.dataPriority == "Medium"):
+            self.dataObj.rightLabel.configure(text_color=("orange","orange"))
+        if(self.dataPriority == "High"):
+            self.dataObj.rightLabel.configure(text_color=("red","red"))
         # close popup
         # close popup
         self.destroy()
@@ -197,6 +203,14 @@ class taskClass(tk.CTkFrame):
             self.itemID = roughDraft.storage(title, description, date, priority, position)
         else:
             self.itemID = itemID
+        
+        if(priority == "Low"):
+            self.rightLabel.configure(text_color=("green","light green"))
+        if(priority == "Medium"):
+            self.rightLabel.configure(text_color=("orange","orange"))
+        if(priority == "High"):
+            self.rightLabel.configure(text_color=("red","red"))
+        
 
         # Making it clickable
         self.bind("<Button-1>", self.leftClick)
@@ -324,6 +338,7 @@ class app(tk.CTk):
         self.openFrame.grid(row=0,column=0, sticky = "nesw", padx=15,pady=15)
         self.openContainerFrame.columnconfigure(0, weight=1)
         self.openContainerFrame.grid_rowconfigure(0, weight=1)
+        self.openFrame.configure(label_fg_color="#3194F0",label_text_color="white")
 
         self.progressContainerFrame = tk.CTkFrame(self.tabView.tab("Tracker"))
         self.progressContainerFrame.grid(row=0,column=1, sticky = "nesw", padx = 15, pady=15)
@@ -331,6 +346,7 @@ class app(tk.CTk):
         self.progressFrame.grid(row=0,column=0, sticky = "nesw", padx = 15, pady=15)
         self.progressContainerFrame.columnconfigure(0, weight=1)
         self.progressContainerFrame.grid_rowconfigure(0, weight=1)
+        self.progressFrame.configure(label_fg_color="#20B963", label_text_color="white")
 
 
         self.reviewContainerFrame = tk.CTkFrame(self.tabView.tab("Tracker"))
@@ -339,6 +355,7 @@ class app(tk.CTk):
         self.reviewFrame.grid(row=0,column=0, sticky = "nesw", padx = 15, pady=15)
         self.reviewContainerFrame.columnconfigure(0, weight=1)
         self.reviewContainerFrame.grid_rowconfigure(0, weight=1)
+        self.reviewFrame.configure(label_fg_color="#FB6123", label_text_color="white")
 
 
         self.completeContainerFrame = tk.CTkFrame(self.tabView.tab("Tracker"))
@@ -347,6 +364,7 @@ class app(tk.CTk):
         self.completedFrame.grid(row=0,column=0,sticky="nesw", padx = 15, pady=15)
         self.completeContainerFrame.columnconfigure(0, weight=1)
         self.completeContainerFrame.grid_rowconfigure(0, weight=1)
+        self.completedFrame.configure(label_fg_color="#768C90", label_text_color="white")
 
         # Button
         self.addTaskButton =tk.CTkButton(master=self.openContainerFrame, text="Add Task", command=self.createTask)
