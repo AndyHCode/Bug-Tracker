@@ -372,11 +372,11 @@ class app(tk.CTk):
 
         self.settingFrame = tk.CTkFrame(self.tabView.tab("Settings"))
         self.settingFrame.place(relx=.5,rely=.5,anchor=tk.CENTER)
-        self.themeLabel = tk.CTkLabel(self.settingFrame,text="Themes")
+        self.themeLabel = tk.CTkLabel(self.settingFrame,text="Light/Dark")
         self.themeLabel.grid(row=0, column=0,padx=10,pady=10)
         self.themeOptionMenu = tk.CTkOptionMenu(master = self.settingFrame, values = ["System Theme","Light","Dark"], command=self.themeSelect)
         self.themeOptionMenu.grid(row=0, column=1, padx=10,pady=10)
-        self.colorLabel = tk.CTkLabel(self.settingFrame, text="Color")
+        self.colorLabel = tk.CTkLabel(self.settingFrame, text="Themes")
         self.colorLabel.grid(row=1,column=0)
         self.colorOptionMenu = tk.CTkOptionMenu(master = self.settingFrame, values= ["Blue", "Dark Blue", "Green","Orange","Pink", "Retro", "Violet", "Yellow"], command=self.colorSelect)
         self.colorOptionMenu.grid(row=1, column=1)
