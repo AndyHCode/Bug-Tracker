@@ -380,6 +380,29 @@ class app(tk.CTk):
         self.colorLabel.grid(row=1,column=0)
         self.colorOptionMenu = tk.CTkOptionMenu(master = self.settingFrame, values= ["Blue", "Dark Blue", "Green","Orange","Pink", "Retro", "Violet", "Yellow"], command=self.colorSelect)
         self.colorOptionMenu.grid(row=1, column=1)
+        # Color
+        if roughDraft.getter()[0] == "src/orange.json":
+            self.colorOptionMenu.set("Orange")
+        elif roughDraft.getter()[0] == "src/pink.json":
+            self.colorOptionMenu.set("Pink")
+        elif roughDraft.getter()[0] == "src/retro.json":
+            self.colorOptionMenu.set("Retro")
+        elif roughDraft.getter()[0] == "src/violet.json":
+            self.colorOptionMenu.set("Violet")
+        elif roughDraft.getter()[0] == "src/yellow.json":
+            self.colorOptionMenu.set("Yellow")
+        elif roughDraft.getter()[0] == "blue":
+            self.colorOptionMenu.set("Blue")
+        elif roughDraft.getter()[0] == "dark blue":
+            self.colorOptionMenu.set("Dark Blue")
+        elif roughDraft.getter()[0] == "green":
+            self.colorOptionMenu.set("Green")
+        if roughDraft.getter()[1] == "light":
+            self.themeOptionMenu.set("Light")
+        elif roughDraft.getter()[1] == "Dark":
+            self.themeOptionMenu.set("dark")
+        elif roughDraft.getter()[1] == "system":
+            self.themeOptionMenu.set("System Theme")
 
         # images
         self.foxLogo = tk.CTkImage(light_image=Image.open("src/logo.png"),
@@ -403,21 +426,29 @@ class app(tk.CTk):
         self.startupLoadData()
     def colorSelect(self, color):
         if color == "Orange":
-            pass
+            roughDraft.setter("src/orange.json", roughDraft.getter()[1])
+            tk.set_default_color_theme("src/orange.json")
         if color == "Pink":
-            pass
+            roughDraft.setter("src/pink.json", roughDraft.getter()[1])
+            tk.set_default_color_theme("src/pink.json")
         if color == "Retro":
-            pass
+            roughDraft.setter("src/retro.json", roughDraft.getter()[1])
+            tk.set_default_color_theme("src/retro.json")
         if color == "Violet":
-            pass
+            roughDraft.setter("src/violet.json", roughDraft.getter()[1])
+            tk.set_default_color_theme("src/violet.json")
         if color == "Yellow":
-            pass
+            roughDraft.setter("src/yellow.json", roughDraft.getter()[1])
+            tk.set_default_color_theme("src/yellow.json")
         if color == "Blue":
-            pass
+            roughDraft.setter("blue", roughDraft.getter()[1])
+            tk.set_default_color_theme("blue")
         if color == "Dark Blue":
-            pass
+            roughDraft.setter("dark blue", roughDraft.getter()[1])
+            tk.set_default_color_theme("dark blue")
         if color == "Green":
-            pass
+            roughDraft.setter("green", roughDraft.getter()[1])
+            tk.set_default_color_theme("green")
         self.restartPopup = tk.CTkToplevel()
         self.restartPopup.grab_set()
         self.restartLabel = tk.CTkLabel(self.restartPopup, text="restart to apply Color",padx=50,pady=50, font=self.foxFont)
@@ -429,10 +460,13 @@ class app(tk.CTk):
         self.destroy()
     def themeSelect(self, color):
         if color == "Dark":
+            roughDraft.setter(roughDraft.getter()[0], "dark")
             tk.set_appearance_mode("dark")
         elif color == "Light":
+            roughDraft.setter(roughDraft.getter()[0], "light")
             tk.set_appearance_mode("light")
         elif color == "System Theme":
+            roughDraft.setter(roughDraft.getter()[0], "system")
             tk.set_appearance_mode("system")
 
     def startupLoadData(self):
@@ -472,8 +506,11 @@ class app(tk.CTk):
             self.popUpForm.focus()  # if window exists focus it
 
 if __name__ == "__main__":
-    tk.set_appearance_mode("dark")
-    tk.set_default_color_theme("src/test.json")
+    roughDraft.ofileChecker()
+    print(roughDraft.getter()[0])
+    print(roughDraft.getter()[1])
+    tk.set_appearance_mode(roughDraft.getter()[1])
+    tk.set_default_color_theme(roughDraft.getter()[0])
     app = app()
     app.geometry("1200x600")
     app.mainloop()

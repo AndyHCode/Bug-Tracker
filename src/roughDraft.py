@@ -38,8 +38,10 @@ def setter(color, theme):
     ofileChecker()
     document = open("storage.pickle","rb")
     storage = pickle.load(document)
-    hold = [color,theme]
-    storage.append(hold)
+    storage.pop()
+    storage.pop()
+    storage.append(color)
+    storage.append(theme)
     document = open("storage.pickle","wb")
     pickle.dump(storage,document)
     document.close()
@@ -117,6 +119,3 @@ def editValues(keys, newValue):
     pickle.dump(storage, ndocument)
     document.close()
 
-
-setter("yellow","green")
-print(getter())
