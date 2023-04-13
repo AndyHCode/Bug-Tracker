@@ -2,7 +2,8 @@ import customtkinter as tk
 import platform
 import datetime
 import roughDraft
-# Check date
+from PIL import Image
+'''Check date and return if date is valid'''
 def dateChecker(date):
     try:
         datetime.datetime.strptime(date, '%m/%d/%y')
@@ -10,7 +11,7 @@ def dateChecker(date):
     except ValueError:
         return False
 
-# When clicked on the Task, popup more information about task
+'''When clicked on the Task, popup more information about task'''
 class viewTask(tk.CTkToplevel):
     def __init__(self, itemID="", dataObj=tk, mainObj = tk,*args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -358,6 +359,16 @@ class app(tk.CTk):
         self.themeOptionMenu = tk.CTkOptionMenu(master = self.settingFrame, values = ["System Theme","Light","Dark"], command=self.themeSelect)
         self.themeOptionMenu.grid(row=0, column=1, padx=10,pady=10)
 
+        # images
+        self.foxLogo = tk.CTkImage(light_image=Image.open("src/logo.png"),
+                                  dark_image=Image.open("src/logo.png"),
+                                  size=(100,100))
+        self.imageLabel = tk.CTkLabel(self.settingFrame, image=self.foxLogo,text="")
+        self.imageLabel.grid(row=1,column=0)
+        self.foxFont = tk.CTkFont(family="Calibri", size=24)
+        self.foxLabel = tk.CTkLabel(self.settingFrame, text="FoxFile Inc.", font=self.foxFont)
+        self.foxLabel.grid(row=1,column=1)
+
         # Weight for the scrollable frames
         for x in range(4):
             self.tabView.tab("Tracker").columnconfigure(x, weight=1)
@@ -414,7 +425,7 @@ class app(tk.CTk):
 
 if __name__ == "__main__":
     tk.set_appearance_mode("dark")
-    tk.set_default_color_theme("src/test.json")
+    tk.set_default_color_theme("src/DarkBlue.json")
     app = app()
     app.geometry("1200x600")
     app.mainloop()
