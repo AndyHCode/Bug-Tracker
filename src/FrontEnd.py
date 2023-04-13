@@ -403,21 +403,30 @@ class app(tk.CTk):
         self.startupLoadData()
     def colorSelect(self, color):
         if color == "Orange":
-            return
+            pass
         if color == "Pink":
-            return
+            pass
         if color == "Retro":
-            return
+            pass
         if color == "Violet":
-            return
+            pass
         if color == "Yellow":
-            return
+            pass
         if color == "Blue":
-            return
+            pass
         if color == "Dark Blue":
-            return
+            pass
         if color == "Green":
-            return
+            pass
+        self.restartPopup = tk.CTkToplevel()
+        self.restartPopup.grab_set()
+        self.restartLabel = tk.CTkLabel(self.restartPopup, text="restart to apply Color",padx=50,pady=50, font=self.foxFont)
+        self.restartLabel.pack()
+        self.restartButton =tk.CTkButton(master=self.restartPopup, text="Restart", command=self.exitFunc)
+        self.restartButton.pack(padx=10,pady=20)
+        self.restartPopup.protocol("WM_DELETE_WINDOW", self.exitFunc)
+    def exitFunc(self):
+        self.destroy()
     def themeSelect(self, color):
         if color == "Dark":
             tk.set_appearance_mode("dark")
