@@ -376,16 +376,20 @@ class app(tk.CTk):
         self.themeLabel.grid(row=0, column=0,padx=10,pady=10)
         self.themeOptionMenu = tk.CTkOptionMenu(master = self.settingFrame, values = ["System Theme","Light","Dark"], command=self.themeSelect)
         self.themeOptionMenu.grid(row=0, column=1, padx=10,pady=10)
+        self.colorLabel = tk.CTkLabel(self.settingFrame, text="Color")
+        self.colorLabel.grid(row=1,column=0)
+        self.colorOptionMenu = tk.CTkOptionMenu(master = self.settingFrame, values= ["Blue", "Dark Blue", "Green","Orange","Pink", "Retro", "Violet", "Yellow"], command=self.colorSelect)
+        self.colorOptionMenu.grid(row=1, column=1)
 
         # images
         self.foxLogo = tk.CTkImage(light_image=Image.open("src/logo.png"),
                                   dark_image=Image.open("src/logo.png"),
                                   size=(100,100))
         self.imageLabel = tk.CTkLabel(self.settingFrame, image=self.foxLogo,text="")
-        self.imageLabel.grid(row=1,column=0, padx=10, pady=10)
+        self.imageLabel.grid(row=2,column=0, padx=10, pady=10)
         self.foxFont = tk.CTkFont(family="Calibri", size=24)
         self.foxLabel = tk.CTkLabel(self.settingFrame, text="FoxFile Inc.", font=self.foxFont)
-        self.foxLabel.grid(row=1,column=1)
+        self.foxLabel.grid(row=2,column=1)
 
         # Weight for the scrollable frames
         for x in range(4):
@@ -397,6 +401,23 @@ class app(tk.CTk):
         #currently holding all the task frame in a list
         self.allTaskList = []
         self.startupLoadData()
+    def colorSelect(self, color):
+        if color == "Orange":
+            return
+        if color == "Pink":
+            return
+        if color == "Retro":
+            return
+        if color == "Violet":
+            return
+        if color == "Yellow":
+            return
+        if color == "Blue":
+            return
+        if color == "Dark Blue":
+            return
+        if color == "Green":
+            return
     def themeSelect(self, color):
         if color == "Dark":
             tk.set_appearance_mode("dark")
@@ -443,7 +464,7 @@ class app(tk.CTk):
 
 if __name__ == "__main__":
     tk.set_appearance_mode("dark")
-    tk.set_default_color_theme("src/test.json")
+    #tk.set_default_color_theme("src/test.json")
     app = app()
     app.geometry("1200x600")
     app.mainloop()
