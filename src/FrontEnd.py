@@ -3,6 +3,7 @@ import platform
 import datetime
 import roughDraft
 from PIL import Image
+
 '''Check date and return if date is valid'''
 def dateChecker(date):
     try:
@@ -75,7 +76,7 @@ class viewTask(tk.CTkToplevel):
         self.rightButton.grid(row = 0, column = 1, padx=10, pady=10)
         self.deleteButton.grid(row = 1, column = 0, padx=10, pady=10)
         self.editButton.grid(row = 1, column = 1, padx=10, pady=10)
-
+    '''Get all user input and check it, if passed, save data and change it in the gui'''
     def saveData(self):
         #get data
         self.dataTitle = self.userTitleTextBox.get("1.0", "end-1c")
@@ -123,7 +124,7 @@ class viewTask(tk.CTkToplevel):
         # close popup
         self.destroy()
 
-
+    '''Edit data in popup'''
     def editData(self):
         # make everything editable
         self.userTitleTextBox.configure(state="normal")
@@ -143,7 +144,7 @@ class viewTask(tk.CTkToplevel):
 
         #add save button
         self.saveButton.grid(row = 1, column = 1, padx=10, pady=10)
-
+    '''Move task frame to right'''
     def moveRight(self):
         if(self.allData[4] == 3):
             return
@@ -154,6 +155,7 @@ class viewTask(tk.CTkToplevel):
         elif(self.allData[4] == 2):
             self.createTaskFrame(title=self.allData[0], description=self.allData[1], priority=self.allData[3], date=self.allData[2], position=3, frameToPassTo=self.mainObj.completedFrame)
         self.destroy()
+    '''Move task frame to left'''
     def moveLeft(self):
         if(self.allData[4] == 0):
             return
@@ -165,11 +167,12 @@ class viewTask(tk.CTkToplevel):
             self.createTaskFrame(title=self.allData[0], description=self.allData[1], priority=self.allData[3], date=self.allData[2], position=2, frameToPassTo=self.mainObj.reviewFrame)
         self.destroy()
 
+    '''Delete task frame and delete data in database'''
     def deleteData(self):
         roughDraft.deleter(self.itemID)
         self.dataObj.destroy()
         self.destroy()
-
+    '''Create task frame'''
     def createTaskFrame(self, title="", description="", priority="", date="", frameToPassTo=tk, position = -1):
         self.temp = taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position=position, mainObj=self.mainObj, addToDatabase=True)
         self.temp.grid(sticky="ew",padx=10,pady=5)
@@ -177,7 +180,7 @@ class viewTask(tk.CTkToplevel):
         roughDraft.deleter(self.itemID)
         self.dataObj.destroy()
         
-# display task on gui
+'''Display/Create task on gui'''
 class taskClass(tk.CTkFrame):
     def __init__(self, master, title = "", description="", priority="", date="", position = -1, mainObj = tk, addToDatabase = False, itemID = "", **kwargs):
         super().__init__(master, **kwargs)
@@ -217,12 +220,13 @@ class taskClass(tk.CTkFrame):
         self.textBox.bind("<Button-1>", self.leftClick)
         self.leftLabel.bind("<Button-1>", self.leftClick)
         self.rightLabel.bind("<Button-1>", self.leftClick)
+        '''When user click on task frame, create a popup'''
     def leftClick(self,event):
         self.popupData = viewTask(self.itemID, self, mainObj= self.mainObj)
         self.popupData.attributes('-topmost',True)
         self.popupData.grab_set()
 
-# Where user input data
+'''Popup for user to input data'''
 class ToplevelTaskForm(tk.CTkToplevel):
     def __init__(self, frame=tk, listData=[], mainObj = tk,*args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -269,7 +273,7 @@ class ToplevelTaskForm(tk.CTkToplevel):
         # Button
         self.confirmButton = tk.CTkButton(self, text="Confirm", command=self.confirmFunc)
         self.confirmButton.pack(padx=10, pady=10)
-
+    '''get and check all user data, if passed, save to database, create task frame, and close popup'''
     def confirmFunc(self):
         #get data
         self.dataTitle = self.userTitleTextBox.get("1.0", "end-1c")
@@ -304,12 +308,12 @@ class ToplevelTaskForm(tk.CTkToplevel):
         # close popup
         self.destroy()
 
-    #Create Task Frame Func
+    '''Create Task Frame Func'''
     def createTaskFrame(self, title="", description="", priority="", date="", frameToPassTo=tk):
         self.listData.append(taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position=0, mainObj=self.mainObj, addToDatabase=True))
         self.listData[-1].grid(sticky="ew",padx=10,pady=5)
         frameToPassTo.columnconfigure(0,weight=1)
-
+'''Main gui that holds everything'''
 class app(tk.CTk):
     def __init__(self):
         super().__init__()
@@ -370,6 +374,7 @@ class app(tk.CTk):
         self.addTaskButton =tk.CTkButton(master=self.openContainerFrame, text="Add Task", command=self.createTask)
         self.addTaskButton.grid(row=1,column=0, sticky="nesw",pady=15, padx=15)
 
+        #Settings stuff
         self.settingFrame = tk.CTkFrame(self.tabView.tab("Settings"))
         self.settingFrame.place(relx=.5,rely=.5,anchor=tk.CENTER)
         self.themeLabel = tk.CTkLabel(self.settingFrame,text="Light/Dark")
@@ -424,6 +429,7 @@ class app(tk.CTk):
         #currently holding all the task frame in a list
         self.allTaskList = []
         self.startupLoadData()
+    '''set color theme'''
     def colorSelect(self, color):
         if color == "Orange":
             roughDraft.setter("src/orange.json", roughDraft.getter()[1])
@@ -468,7 +474,7 @@ class app(tk.CTk):
         elif color == "System Theme":
             roughDraft.setter(roughDraft.getter()[0], "system")
             tk.set_appearance_mode("system")
-
+    '''Create all frame from database for startup'''
     def startupLoadData(self):
         self.allID = roughDraft.getAllKeys()
         print(self.allID)
@@ -486,17 +492,19 @@ class app(tk.CTk):
             elif (self.tempList[4] == 3):
                 self.addTaskFrame(title=self.tempList[0], description=self.tempList[1], priority=self.tempList[3], date=self.tempList[2],
                                      position=self.tempList[4], frameToPassTo=self.completedFrame,itemID=data)
-
+    '''Create task frame'''
     def createTaskFrame(self, title="", description="", priority="", date="", frameToPassTo=tk, position=-1):
         self.allTaskList.append(taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position=position, mainObj=self, addToDatabase=True))
         self.allTaskList[-1].grid(sticky="ew",padx=10,pady=5)
         frameToPassTo.columnconfigure(0,weight=1)
             
+    '''add task frame'''
     def addTaskFrame(self, title="", description="", priority="", date="", frameToPassTo=tk, position=-1, itemID = ""):
         self.allTaskList.append(taskClass(frameToPassTo, title=title, description=description, priority=priority, date=date, position=position, mainObj=self, itemID = itemID))
         self.allTaskList[-1].grid(sticky="ew",padx=10,pady=5)
         frameToPassTo.columnconfigure(0,weight=1)
 
+    '''Popup for add task'''
     def createTask(self):
         if self.popUpForm is None or not self.popUpForm.winfo_exists():
             self.popUpForm = ToplevelTaskForm(frame=self.openFrame, listData=self.allTaskList, mainObj = self)  # create window if its None or destroyed
