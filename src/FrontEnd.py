@@ -52,7 +52,7 @@ class viewTask(tk.CTkToplevel):
 
         # Priority
         self.priorityLabel = tk.CTkLabel(self.formFrameBottom, text="Select Priority")
-        self.priorityLabel.grid(row=0,column=0)
+        self.priorityLabel.grid(row=0,column=0,padx=2)
         self.priorityEntry = tk.CTkEntry(self.formFrameBottom)
         self.priorityEntry.insert(0, self.allData[3])
         self.priorityEntry.configure(state="disabled")
@@ -67,10 +67,10 @@ class viewTask(tk.CTkToplevel):
         self.dateEntry.grid(row=1,column=1,padx=10, pady=10)
 
         # Button
-        self.leftButton = tk.CTkButton(self.buttonFrame, text="Move Left", command=self.moveLeft)
-        self.rightButton = tk.CTkButton(self.buttonFrame, text="Move right", command=self.moveRight)
+        self.leftButton = tk.CTkButton(self.buttonFrame, text="Previous Phase", command=self.moveLeft)
+        self.rightButton = tk.CTkButton(self.buttonFrame, text="Next Phase", command=self.moveRight)
         self.deleteButton = tk.CTkButton(self.buttonFrame, text="Delete", command=self.deleteData)
-        self.editButton = tk.CTkButton(self.buttonFrame, text="edit", command=self.editData)
+        self.editButton = tk.CTkButton(self.buttonFrame, text="Edit", command=self.editData)
         self.saveButton = tk.CTkButton(self.buttonFrame, text="Save", command=self.saveData)
         self.leftButton.grid(row = 0, column = 0,padx=10, pady=10)
         self.rightButton.grid(row = 0, column = 1, padx=10, pady=10)
@@ -198,9 +198,9 @@ class taskClass(tk.CTkFrame):
         self.textBox.insert("0.0", title)
         self.textBox.configure(state="disabled",wrap="word")
         self.leftLabel = tk.CTkLabel(self, text=date,padx=10)
-        self.leftLabel.grid(row = 1, column=0,sticky="w")
+        self.leftLabel.grid(row = 1, column=0,sticky="w", padx=2,pady=2)
         self.rightLabel = tk.CTkLabel(self, text=priority,padx=10)
-        self.rightLabel.grid(row = 1, column=0,sticky="e")
+        self.rightLabel.grid(row = 1, column=0,sticky="e",padx=2,pady=2)
 
         if self.addToDatabase:
             self.itemID = roughDraft.storage(title, description, date, priority, position)
@@ -259,7 +259,7 @@ class ToplevelTaskForm(tk.CTkToplevel):
 
         # Priority
         self.priorityLabel = tk.CTkLabel(self.formFrameBottom, text="Select Priority")
-        self.priorityLabel.grid(row=0,column=0)
+        self.priorityLabel.grid(row=0,column=0, padx=2)
         self.priorityComboBox = tk.CTkComboBox(self.formFrameBottom, values=["Low", "Medium", "High"], state="readonly")
         self.priorityComboBox.set("Low")
         self.priorityComboBox.grid(row=0, column=1,padx=10,pady=10)
