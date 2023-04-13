@@ -4,9 +4,19 @@ import pickle, os, random
 def initialize():
     ''' this program creates our dictionary and then stores it into a pickle file '''
     document = open("tracker.pickle","wb")
+    
     storage = {}
+    
     pickle.dump(storage,document)
+    
     document.close()
+    
+
+def oinitialize():
+    dcoument = open("storage.pickle","wb")
+    storage = ["blue","system"]
+    pickle.dump(storage,dcoument)
+    dcoument.close()
 
 def fileChecker():
     ''' this function checks to see if the pickle file exists, and if not it creates it'''
@@ -15,9 +25,29 @@ def fileChecker():
         initialize()
     else:
         return True
-    
+
+def ofileChecker():
+    ''' this function checks to see if the pickle file exists, and if not it creates it'''
+    checker = os.path.isfile("storage.pickle")
+    if checker == False:
+        oinitialize()
+    else:
+        return True
+
+def setter(color, theme):
+    ofileChecker()
+    document = open("storage.pickle","rb")
+    storage = pickle.load(document)
+    hold = [color,theme]
+    storage.append(hold)
+    document = open("storage.pickle","wb")
+    pickle.dump(storage,document)
+    document.close()
+
 def getter():
-    print("yuh")
+    document = open("storage.pickle","rb")
+    storage = pickle.load(document)
+    return storage
 
 def storage(name, description, date, priority, position):
     ''' This function stores our values from the user into a dictionary'''
@@ -88,4 +118,5 @@ def editValues(keys, newValue):
     document.close()
 
 
-
+setter("yellow","green")
+print(getter())
