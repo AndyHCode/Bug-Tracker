@@ -382,7 +382,7 @@ class app(tk.CTk):
                                   dark_image=Image.open("src/logo.png"),
                                   size=(100,100))
         self.imageLabel = tk.CTkLabel(self.settingFrame, image=self.foxLogo,text="")
-        self.imageLabel.grid(row=1,column=0)
+        self.imageLabel.grid(row=1,column=0, padx=10, pady=10)
         self.foxFont = tk.CTkFont(family="Calibri", size=24)
         self.foxLabel = tk.CTkLabel(self.settingFrame, text="FoxFile Inc.", font=self.foxFont)
         self.foxLabel.grid(row=1,column=1)
