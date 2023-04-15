@@ -1,8 +1,9 @@
+import customtkinter as tk
 import platform
 import datetime
-import customtkinter as tk
-from PIL import Image
 import roughDraft
+from PIL import Image
+
 '''Check date and return if date is valid'''
 
 
@@ -60,7 +61,7 @@ class ViewTask(tk.CTkToplevel):
         # Priority
         self.priority_label = tk.CTkLabel(
             self.form_frame_bottom, text="Select Priority")
-        self.priority_label.grid(row=0, column=0)
+        self.priority_label.grid(row=0, column=0, padx=2)
         self.priority_entry = tk.CTkEntry(self.form_frame_bottom)
         self.priority_entry.insert(0, self.all_data[3])
         self.priority_entry.configure(state="disabled")
@@ -79,20 +80,20 @@ class ViewTask(tk.CTkToplevel):
         # Button
         self.left_button = tk.CTkButton(
             self.button_frame,
-            text="Move Left",
+            text="Previous Phase",
             command=self.move_left)
         self.right_button = tk.CTkButton(
             self.button_frame,
-            text="Move right",
+            text="Next Phase",
             command=self.move_right)
         self.delete_button = tk.CTkButton(
             self.button_frame,
             text="Delete",
             command=self.delete_data)
-        self.edit_button = tk.CTkButton(self.button_frame,
-                                        text="edit", command=self.edit_data)
-        self.save_button = tk.CTkButton(self.button_frame,
-                                        text="Save", command=self.save_data)
+        self.edit_button = tk.CTkButton(
+            self.button_frame, text="Edit", command=self.edit_data)
+        self.save_button = tk.CTkButton(
+            self.button_frame, text="Save", command=self.save_data)
         self.left_button.grid(row=0, column=0, padx=10, pady=10)
         self.right_button.grid(row=0, column=1, padx=10, pady=10)
         self.delete_button.grid(row=1, column=0, padx=10, pady=10)
@@ -112,10 +113,10 @@ class ViewTask(tk.CTkToplevel):
         self.description_label.configure(text_color=self.color)
         self.date_label.configure(text_color=self.color)
         self.failed = False
-        if len(self.data_title) == 0:
+        if (len(self.data_title) == 0):
             self.user_title_label.configure(text_color="red")
             self.failed = True
-        if len(self.data_description) == 0:
+        if (len(self.data_description) == 0):
             self.description_label.configure(text_color="red")
             self.failed = True
         if (not (len(self.data_date) == 0) and not date_checker(self.data_date)):
@@ -301,9 +302,9 @@ class TaskClass(tk.CTkFrame):
         self.text_box.insert("0.0", title)
         self.text_box.configure(state="disabled", wrap="word")
         self.left_label = tk.CTkLabel(self, text=date, padx=10)
-        self.left_label.grid(row=1, column=0, sticky="w")
+        self.left_label.grid(row=1, column=0, sticky="w", padx=2, pady=2)
         self.right_label = tk.CTkLabel(self, text=priority, padx=10)
-        self.right_label.grid(row=1, column=0, sticky="e")
+        self.right_label.grid(row=1, column=0, sticky="e", padx=2, pady=2)
 
         if self.add_to_database:
             self.item_id = roughDraft.storage(
@@ -370,7 +371,7 @@ class ToplevelTaskForm(tk.CTkToplevel):
         # Priority
         self.priority_label = tk.CTkLabel(
             self.form_frame_bottom, text="Select Priority")
-        self.priority_label.grid(row=0, column=0)
+        self.priority_label.grid(row=0, column=0, padx=2)
         self.priority_combo_box = tk.CTkComboBox(
             self.form_frame_bottom, values=[
                 "Low", "Medium", "High"], state="readonly")
@@ -533,7 +534,11 @@ class App(tk.CTk):
         self.completed_frame = tk.CTkScrollableFrame(
             self.complete_container_frame, label_text="Complete")
         self.completed_frame.grid(
-            row=0, column=0, sticky="nesw", padx=15, pady=15)
+            row=0,
+            column=0,
+            sticky="nesw",
+            padx=15,
+            pady=15)
         self.complete_container_frame.columnconfigure(0, weight=1)
         self.complete_container_frame.grid_rowconfigure(0, weight=1)
         self.completed_frame.configure(
@@ -546,7 +551,11 @@ class App(tk.CTk):
             text="Add Task",
             command=self.create_task)
         self.add_task_button.grid(
-            row=1, column=0, sticky="nesw", pady=15, padx=15)
+            row=1,
+            column=0,
+            sticky="nesw",
+            pady=15,
+            padx=15)
 
         # Settings stuff
         self.setting_frame = tk.CTkFrame(self.tab_view.tab("Settings"))
